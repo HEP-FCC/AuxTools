@@ -1,0 +1,10 @@
+### Add the follwing at the end of your .bashrc
+# Load in the git branch prompt script.
+source ~/.git-prompt.sh
+
+# Simple prompt
+function custom_prompt
+{
+PS1="\h:\w\$(__git_ps1) \$ "
+}
+custom_prompt
