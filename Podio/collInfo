@@ -10,23 +10,40 @@ import argparse
 
 default_input='/eos/experiment/fcc/ee/generation/DelphesEvents/winter2023/IDEA/p8_ee_ZZ_ecm240/events_057786065.root'
 
-parser = argparse.ArgumentParser(description='Args')
-parser.add_argument('-i', '--input', default=default_input)
+parser = argparse.ArgumentParser(description='Print out Collection IDs')
+parser.add_argument('input', type=str)
 args = parser.parse_args()
 
 infile = uproot.open(args.input)
+
 if 'podio_metadata;1' in infile.keys():
-    podio_table = file['podio_metadata']['events___idTable']['m_names'].array()[0]
+    ids = infile['podio_metadata']['events___idTable']['m_collectionIDs'].array()[0]
+    names = infile['podio_metadata']['events___idTable']['m_names'].array()[0]
+    types = infile['podio_metadata']['events___CollectionTypeInfo._1'].array()[0]
+
+    ids_width = len(str(max(ids)))
+    names_width = len(max(names, key=len))
+    types_width = len(max(types, key=len))
+
+    print('ID ' + ids_width * ' ' + 'Name' + (names_width - 1) * ' ' + 'Type')
+    print((6 + ids_width + names_width + types_width) * '-')
+    for id,name,type in zip(ids, names, types):
+        print(f"{id:{ids_width}}   {name:{names_width}}   {type:{types_width}}")
+    print((6 + ids_width + names_width + types_width) * '-')
+
 elif 'metadata;1' in infile.keys():
-    podio_table = infile['metadata']['CollectionIDs']['m_names'].array()[0]
+    ids = infile['metadata']['CollectionIDs']['m_collectionIDs'].array()[0]
+    names = infile['metadata']['CollectionIDs']['m_names'].array()[0]
+
+    ids_width = len(str(max(ids)))
+    names_width = len(max(names, key=len))
+
+    print('ID ' + ids_width * ' ' + 'Name')
+    print((3 + ids_width + names_width) * '-')
+    for id,name in zip(ids, names):
+        print(f"{id:{ids_width}}   {name:{names_width}}")
+    print((3 + ids_width + names_width) * '-')
 else:
     print('ERROR: File format not known! Aborting...')
     exit(1)
 
-print("")
-print("ID  ->  Collection")
-print("==================")
-for i,val in enumerate(podio_table):
-    print("{:2}  ->  {}".format(i+1, val))
-print("==================")
-print("")
