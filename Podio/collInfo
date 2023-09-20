@@ -2,13 +2,11 @@
 '''
 Simple script to read podio CollectionID table from reco file
 
-by Louis Portales
+originally by Louis Portales
 '''
 
 import uproot
 import argparse
-
-default_input='/eos/experiment/fcc/ee/generation/DelphesEvents/winter2023/IDEA/p8_ee_ZZ_ecm240/events_057786065.root'
 
 parser = argparse.ArgumentParser(description='Print out Collection IDs')
 parser.add_argument('input', type=str)
@@ -43,7 +41,7 @@ elif 'metadata;1' in infile.keys():
     for id,name in zip(ids, names):
         print(f"{id:{ids_width}}   {name:{names_width}}")
     print((3 + ids_width + names_width) * '-')
+
 else:
     print('ERROR: File format not known! Aborting...')
     exit(1)
-
